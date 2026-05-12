@@ -12,10 +12,22 @@ import streamlit as st
 
 
 st.set_page_config(page_title="SMARTEK360 Shopify Dashboard", layout="wide")
+
+# =========================================================
+# LOGIN CONTROL
+# =========================================================
+# Bu dosya ana sayfadan giriş yapılmadan çalışmasın.
+if "logged_in" not in st.session_state or st.session_state.logged_in is not True:
+    st.warning("Bu sayfaya erişmek için önce ana sayfadan giriş yapmalısın.")
+    st.stop()
+
 st.title("🟣 SMARTEK360: Shopify Dashboard")
 st.caption(
     "Built for Shopify orders, Shopify traffic exports, Shopify cost table, manual inventory, Meta Ads performance exports, and Meta billing spend."
 )
+
+if st.button("← Ana Sayfaya Dön"):
+    st.switch_page("ana_sayfa.py")
 
 
 # ==============================
