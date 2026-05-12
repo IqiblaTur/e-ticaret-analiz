@@ -90,7 +90,7 @@ def build_rain_items_html():
 
 
 # =========================
-# CSS ONLY FOR MAIN / LOGIN PAGE
+# CSS
 # =========================
 def inject_main_css():
     rain_items_html = build_rain_items_html()
@@ -370,20 +370,17 @@ def login_page():
 def find_app_file(active_app: str):
     app_paths = {
         "shopify": [
-            BASE_DIR / "Pages" / "Shopify_app" / "Shopify_app.py",
-            BASE_DIR / "Pages" / "Shopify_app.py",
+            BASE_DIR / "pages" / "Shopify_app" / "Shopify_app.py",
             BASE_DIR / "pages" / "Shopify_app.py",
             BASE_DIR / "Shopify_app.py",
         ],
         "trendyol": [
-            BASE_DIR / "Pages" / "smartek_app" / "smartek_app.py",
-            BASE_DIR / "Pages" / "smartek_app.py",
+            BASE_DIR / "pages" / "smartek_app" / "smartek_app.py",
             BASE_DIR / "pages" / "smartek_app.py",
             BASE_DIR / "smartek_app.py",
         ],
         "hepsiburada": [
-            BASE_DIR / "Pages" / "Hepsiburada_app" / "Hepsiburada_app.py",
-            BASE_DIR / "Pages" / "Hepsiburada_app.py",
+            BASE_DIR / "pages" / "Hepsiburada_app" / "Hepsiburada_app.py",
             BASE_DIR / "pages" / "Hepsiburada_app.py",
             BASE_DIR / "Hepsiburada_app.py",
         ],
@@ -419,34 +416,24 @@ def show_file_debug(active_app: str, possible_paths: list[Path]):
     except Exception as e:
         st.write(str(e))
 
-    lower_pages = BASE_DIR / "pages"
-    upper_pages = BASE_DIR / "Pages"
+    pages_dir = BASE_DIR / "pages"
 
-    if lower_pages.exists():
-        st.write("Küçük harfli pages klasörü içeriği:")
+    if pages_dir.exists():
+        st.write("pages klasörü içeriği:")
         try:
-            st.write([p.name for p in lower_pages.iterdir()])
-        except Exception as e:
-            st.write(str(e))
-    else:
-        st.warning("Küçük harfli pages klasörü bulunamadı.")
-
-    if upper_pages.exists():
-        st.write("Büyük harfli Pages klasörü içeriği:")
-        try:
-            st.write([p.name for p in upper_pages.iterdir()])
+            st.write([p.name for p in pages_dir.iterdir()])
         except Exception as e:
             st.write(str(e))
 
         try:
-            for folder in upper_pages.iterdir():
+            for folder in pages_dir.iterdir():
                 if folder.is_dir():
                     st.write(f"{folder.name} klasörü içeriği:")
                     st.write([p.name for p in folder.iterdir()])
         except Exception as e:
             st.write(str(e))
     else:
-        st.warning("Büyük harfli Pages klasörü bulunamadı.")
+        st.warning("pages klasörü bulunamadı.")
 
     st.stop()
 
@@ -571,7 +558,7 @@ def dashboard_page():
     left, right = st.columns([3, 1])
 
     with left:
-        st.info("Bu ana sayfa merkezi giriş kapısıdır. Platform kodları Pages klasörünün içinden doğrudan çalıştırılır.")
+        st.info("Bu ana sayfa merkezi giriş kapısıdır. Platform kodları pages klasörünün içinden doğrudan çalıştırılır.")
 
     with right:
         if st.button("Çıkış Yap"):
