@@ -29,7 +29,6 @@ PRODUCT_IMAGES = sorted(
     list(ASSETS_DIR.glob("product*.jpeg"))
 )
 
-
 # =========================
 # HELPERS
 # =========================
@@ -49,13 +48,12 @@ def get_secret_password():
     try:
         return st.secrets["APP_PASSWORD"]
     except Exception:
-        return "1234"  # Lokal test için geçici şifre
+        return "1234"
 
 
 logo_dark_uri = image_to_data_uri(LOGO_DARK)
 logo_light_uri = image_to_data_uri(LOGO_LIGHT)
 product_uri_list = [image_to_data_uri(img) for img in PRODUCT_IMAGES if img.exists()]
-
 
 # =========================
 # SESSION STATE
@@ -63,6 +61,8 @@ product_uri_list = [image_to_data_uri(img) for img in PRODUCT_IMAGES if img.exis
 if "logged_in" not in st.session_state:
     st.session_state.logged_in = False
 
+if "active_app" not in st.session_state:
+    st.session_state.active_app = "home"
 
 # =========================
 # PRODUCT RAIN BACKGROUND
@@ -83,7 +83,6 @@ for i, img_uri in enumerate(product_uri_list):
          src="{img_uri}"
          style="left:{left}%; animation-delay:-{delay}s; animation-duration:{duration}s;">
     """
-
 
 # =========================
 # CSS
@@ -298,7 +297,6 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-
 # =========================
 # LOGIN PAGE
 # =========================
@@ -342,6 +340,7 @@ def login_page():
     if st.button("Giriş Yap"):
         if password == get_secret_password():
             st.session_state.logged_in = True
+            st.session_state.active_app = "home"
             st.rerun()
         else:
             st.error("Şifre hatalı. Lütfen tekrar dene.")
@@ -354,6 +353,35 @@ def login_page():
         unsafe_allow_html=True
     )
 
+# =========================
+# RUN SELECTED APP
+# =========================
+def run_selected_app():
+    if st.session_state.active_app == "shopify":
+        target_file = BASE_DIR / "Pages" / "Shopify_app" / "Shopify_app.py"
+    elif st.session_state.active_app == "trendyol":
+        target_file = BASE_DIR / "Pages" / "smartek_app" / "smartek_app.py"
+    elif st.session_state.active_app == "hepsiburada":
+        target_file = BASE_DIR / "Pages" / "Hepsiburada_app" / "Hepsiburada_app.py"
+    else:
+        st.session_state.active_app = "home"
+        st.rerun()
+
+    if not target_file.exists():
+        st.error(f"Dosya bulunamadı: {target_file}")
+        st.stop()
+
+    if st.button("← Ana Sayfaya Dön"):
+        st.session_state.active_app = "home"
+        st.rerun()
+
+    original_set_page_config = st.set_page_config
+    st.set_page_config = lambda *args, **kwargs: None
+
+    try:
+        runpy.run_path(str(target_file), run_name="__main__")
+    finally:
+        st.set_page_config = original_set_page_config
 
 # =========================
 # DASHBOARD PAGE
@@ -397,7 +425,8 @@ def dashboard_page():
         )
 
         if st.button("Shopify'a Git 🛍️"):
-            st.switch_page("pages/Shopify_app.py")
+            st.session_state.active_app = "shopify"
+            st.rerun()
 
     with col2:
         st.markdown(
@@ -414,7 +443,8 @@ def dashboard_page():
         )
 
         if st.button("Trendyol'a Git 📦"):
-            st.switch_page("pages/smartek_app.py")
+            st.session_state.active_app = "trendyol"
+            st.rerun()
 
     with col3:
         st.markdown(
@@ -431,18 +461,20 @@ def dashboard_page():
         )
 
         if st.button("Hepsiburada'ya Git 🧾"):
-            st.switch_page("pages/Hepsiburada_app.py")
+            st.session_state.active_app = "hepsiburada"
+            st.rerun()
 
     st.divider()
 
     left, right = st.columns([3, 1])
 
     with left:
-        st.info("Bu ana sayfa merkezi giriş kapısıdır. Platform kodların pages klasörünün içinde çalışır.")
+        st.info("Bu ana sayfa merkezi giriş kapısıdır. Platform kodların Pages klasörünün içinden çalışır.")
 
     with right:
         if st.button("Çıkış Yap"):
             st.session_state.logged_in = False
+            st.session_state.active_app = "home"
             st.rerun()
 
     st.markdown('</div>', unsafe_allow_html=True)
@@ -452,11 +484,13 @@ def dashboard_page():
         unsafe_allow_html=True
     )
 
-
 # =========================
 # ROUTER
 # =========================
 if st.session_state.logged_in:
-    dashboard_page()
+    if st.session_state.active_app == "home":
+        dashboard_page()
+    else:
+        run_selected_app()
 else:
     login_page()
