@@ -396,7 +396,7 @@ def dashboard_page():
         )
 
         if st.button("Shopify'a Git 🛍️"):
-            st.switch_page("Pages/Shopify_app/Shopify_app.py")
+            st.switch_page("pages/Shopify_app.py")
 
     with col2:
         st.markdown(
@@ -413,7 +413,7 @@ def dashboard_page():
         )
 
         if st.button("Trendyol'a Git 📦"):
-            st.switch_page("Pages/smartek_app/smartek_app.py")
+            st.switch_page("pages/smartek_app.py")
 
     with col3:
         st.markdown(
@@ -430,14 +430,14 @@ def dashboard_page():
         )
 
         if st.button("Hepsiburada'ya Git 🧾"):
-            st.switch_page("Pages/Hepsiburada_app/Hepsiburada_app.py")
+            st.switch_page("pages/Hepsiburada_app.py")
 
     st.divider()
 
     left, right = st.columns([3, 1])
 
     with left:
-        st.info("Bu ana sayfa merkezi giriş kapısıdır. Platform kodların Pages klasörünün içinde çalışır.")
+        st.info("Bu ana sayfa merkezi giriş kapısıdır. Platform kodların Pages klasöründeki asıl uygulamalara bağlanır.")
 
     with right:
         if st.button("Çıkış Yap"):
