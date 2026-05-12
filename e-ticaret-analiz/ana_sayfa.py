@@ -17,7 +17,7 @@ st.set_page_config(
 # =========================
 # PATHS
 # =========================
-BASE_DIR = Path(__file__).parent
+BASE_DIR = Path(__file__).resolve().parent
 ASSETS_DIR = BASE_DIR / "assets"
 
 LOGO_DARK = ASSETS_DIR / "logo_dark.png"
@@ -64,243 +64,253 @@ if "logged_in" not in st.session_state:
 if "active_app" not in st.session_state:
     st.session_state.active_app = "home"
 
+
 # =========================
 # PRODUCT RAIN BACKGROUND
 # =========================
-rain_items_html = ""
+def build_rain_items_html():
+    rain_items_html = ""
 
-for i, img_uri in enumerate(product_uri_list):
-    left_positions = [5, 18, 32, 47, 62, 76, 88]
-    delays = [0, 4, 8, 12, 16, 20, 24]
-    durations = [28, 34, 40, 46, 52]
+    for i, img_uri in enumerate(product_uri_list):
+        left_positions = [5, 18, 32, 47, 62, 76, 88]
+        delays = [0, 4, 8, 12, 16, 20, 24]
+        durations = [28, 34, 40, 46, 52]
 
-    left = left_positions[i % len(left_positions)]
-    delay = delays[i % len(delays)]
-    duration = durations[i % len(durations)]
+        left = left_positions[i % len(left_positions)]
+        delay = delays[i % len(delays)]
+        duration = durations[i % len(durations)]
 
-    rain_items_html += f"""
-    <img class="rain-product"
-         src="{img_uri}"
-         style="left:{left}%; animation-delay:-{delay}s; animation-duration:{duration}s;">
-    """
+        rain_items_html += f"""
+        <img class="rain-product"
+             src="{img_uri}"
+             style="left:{left}%; animation-delay:-{delay}s; animation-duration:{duration}s;">
+        """
+
+    return rain_items_html
+
 
 # =========================
-# CSS
+# CSS ONLY FOR MAIN / LOGIN PAGE
 # =========================
-st.markdown(
-    f"""
-    <style>
-        .stApp {{
-            background:
-                radial-gradient(circle at 50% 20%, rgba(218, 165, 32, 0.18), transparent 32%),
-                linear-gradient(135deg, #050505 0%, #111111 48%, #050505 100%);
-            overflow: hidden;
-        }}
+def inject_main_css():
+    rain_items_html = build_rain_items_html()
 
-        header {{
-            visibility: hidden;
-        }}
-
-        #MainMenu {{
-            visibility: hidden;
-        }}
-
-        footer {{
-            visibility: hidden;
-        }}
-
-        [data-testid="stSidebar"] {{
-            display: none;
-        }}
-
-        .block-container {{
-            padding-top: 2rem;
-            padding-bottom: 2rem;
-            max-width: 1200px;
-        }}
-
-        .rain-layer {{
-            position: fixed;
-            inset: 0;
-            z-index: 0;
-            overflow: hidden;
-            pointer-events: none;
-        }}
-
-        .rain-product {{
-            position: absolute;
-            top: -280px;
-            width: 170px;
-            opacity: 0.14;
-            filter: blur(0.2px) drop-shadow(0 0 24px rgba(212,175,55,0.25));
-            animation-name: productRain;
-            animation-timing-function: linear;
-            animation-iteration-count: infinite;
-        }}
-
-        @keyframes productRain {{
-            0% {{
-                transform: translateY(-300px) rotate(0deg) scale(0.75);
-                opacity: 0;
+    st.markdown(
+        f"""
+        <style>
+            .stApp {{
+                background:
+                    radial-gradient(circle at 50% 20%, rgba(218, 165, 32, 0.18), transparent 32%),
+                    linear-gradient(135deg, #050505 0%, #111111 48%, #050505 100%);
             }}
-            12% {{
-                opacity: 0.16;
+
+            header {{
+                visibility: hidden;
             }}
-            70% {{
-                opacity: 0.13;
+
+            #MainMenu {{
+                visibility: hidden;
             }}
-            100% {{
-                transform: translateY(125vh) rotate(32deg) scale(1.05);
-                opacity: 0;
+
+            footer {{
+                visibility: hidden;
             }}
-        }}
 
-        .main-card {{
-            position: relative;
-            z-index: 2;
-            background: rgba(8, 8, 8, 0.76);
-            border: 1px solid rgba(212, 175, 55, 0.35);
-            box-shadow: 0 24px 85px rgba(0,0,0,0.60);
-            border-radius: 34px;
-            padding: 44px;
-            backdrop-filter: blur(16px);
-            margin-top: 38px;
-        }}
+            [data-testid="stSidebar"] {{
+                display: none;
+            }}
 
-        .brand-logo {{
-            width: 390px;
-            max-width: 100%;
-            display: block;
-            margin: 0 auto 18px auto;
-        }}
+            .block-container {{
+                padding-top: 2rem;
+                padding-bottom: 2rem;
+                max-width: 1200px;
+            }}
 
-        .brand-title {{
-            text-align: center;
-            color: #ffffff;
-            font-size: 48px;
-            font-weight: 850;
-            letter-spacing: 1px;
-            margin-bottom: 8px;
-        }}
+            .rain-layer {{
+                position: fixed;
+                inset: 0;
+                z-index: 0;
+                overflow: hidden;
+                pointer-events: none;
+            }}
 
-        .brand-subtitle {{
-            text-align: center;
-            color: rgba(255,255,255,0.72);
-            font-size: 18px;
-            margin-bottom: 32px;
-        }}
+            .rain-product {{
+                position: absolute;
+                top: -280px;
+                width: 170px;
+                opacity: 0.14;
+                filter: blur(0.2px) drop-shadow(0 0 24px rgba(212,175,55,0.25));
+                animation-name: productRain;
+                animation-timing-function: linear;
+                animation-iteration-count: infinite;
+            }}
 
-        .gold-line {{
-            width: 170px;
-            height: 3px;
-            background: linear-gradient(90deg, transparent, #d4af37, transparent);
-            margin: 0 auto 32px auto;
-            border-radius: 99px;
-        }}
+            @keyframes productRain {{
+                0% {{
+                    transform: translateY(-300px) rotate(0deg) scale(0.75);
+                    opacity: 0;
+                }}
+                12% {{
+                    opacity: 0.16;
+                }}
+                70% {{
+                    opacity: 0.13;
+                }}
+                100% {{
+                    transform: translateY(125vh) rotate(32deg) scale(1.05);
+                    opacity: 0;
+                }}
+            }}
 
-        .login-box {{
-            max-width: 440px;
-            margin: 0 auto;
-            padding: 28px;
-            border-radius: 26px;
-            background: rgba(255,255,255,0.065);
-            border: 1px solid rgba(255,255,255,0.12);
-        }}
+            .main-card {{
+                position: relative;
+                z-index: 2;
+                background: rgba(8, 8, 8, 0.76);
+                border: 1px solid rgba(212, 175, 55, 0.35);
+                box-shadow: 0 24px 85px rgba(0,0,0,0.60);
+                border-radius: 34px;
+                padding: 44px;
+                backdrop-filter: blur(16px);
+                margin-top: 38px;
+            }}
 
-        .panel-title {{
-            color: #ffffff;
-            font-size: 25px;
-            font-weight: 750;
-            text-align: center;
-            margin-bottom: 10px;
-        }}
+            .brand-logo {{
+                width: 390px;
+                max-width: 100%;
+                display: block;
+                margin: 0 auto 18px auto;
+            }}
 
-        .panel-desc {{
-            color: rgba(255,255,255,0.65);
-            text-align: center;
-            font-size: 15px;
-            margin-bottom: 20px;
-        }}
+            .brand-title {{
+                text-align: center;
+                color: #ffffff;
+                font-size: 48px;
+                font-weight: 850;
+                letter-spacing: 1px;
+                margin-bottom: 8px;
+            }}
 
-        .platform-card {{
-            background: rgba(255,255,255,0.075);
-            border: 1px solid rgba(255,255,255,0.13);
-            padding: 28px;
-            border-radius: 28px;
-            height: 100%;
-            transition: all 0.25s ease;
-            margin-bottom: 14px;
-        }}
+            .brand-subtitle {{
+                text-align: center;
+                color: rgba(255,255,255,0.72);
+                font-size: 18px;
+                margin-bottom: 32px;
+            }}
 
-        .platform-card:hover {{
-            transform: translateY(-5px);
-            border-color: rgba(212,175,55,0.70);
-            box-shadow: 0 18px 44px rgba(212,175,55,0.13);
-        }}
+            .gold-line {{
+                width: 170px;
+                height: 3px;
+                background: linear-gradient(90deg, transparent, #d4af37, transparent);
+                margin: 0 auto 32px auto;
+                border-radius: 99px;
+            }}
 
-        .platform-title {{
-            color: #ffffff;
-            font-size: 23px;
-            font-weight: 800;
-            margin-bottom: 8px;
-        }}
+            .login-box {{
+                max-width: 440px;
+                margin: 0 auto;
+                padding: 28px;
+                border-radius: 26px;
+                background: rgba(255,255,255,0.065);
+                border: 1px solid rgba(255,255,255,0.12);
+            }}
 
-        .platform-desc {{
-            color: rgba(255,255,255,0.66);
-            font-size: 15px;
-            min-height: 58px;
-        }}
+            .panel-title {{
+                color: #ffffff;
+                font-size: 25px;
+                font-weight: 750;
+                text-align: center;
+                margin-bottom: 10px;
+            }}
 
-        .metric-mini {{
-            color: #d4af37;
-            font-size: 13px;
-            letter-spacing: 0.7px;
-            text-transform: uppercase;
-            margin-bottom: 8px;
-            font-weight: 700;
-        }}
+            .panel-desc {{
+                color: rgba(255,255,255,0.65);
+                text-align: center;
+                font-size: 15px;
+                margin-bottom: 20px;
+            }}
 
-        div.stButton > button {{
-            width: 100%;
-            border-radius: 15px;
-            border: 1px solid rgba(212,175,55,0.55);
-            background: linear-gradient(135deg, #d4af37, #9d7417);
-            color: #111111;
-            font-weight: 850;
-            padding: 0.78rem 1rem;
-        }}
+            .platform-card {{
+                background: rgba(255,255,255,0.075);
+                border: 1px solid rgba(255,255,255,0.13);
+                padding: 28px;
+                border-radius: 28px;
+                height: 100%;
+                transition: all 0.25s ease;
+                margin-bottom: 14px;
+            }}
 
-        div.stButton > button:hover {{
-            border-color: #ffffff;
-            color: #000000;
-            box-shadow: 0 0 24px rgba(212,175,55,0.38);
-        }}
+            .platform-card:hover {{
+                transform: translateY(-5px);
+                border-color: rgba(212,175,55,0.70);
+                box-shadow: 0 18px 44px rgba(212,175,55,0.13);
+            }}
 
-        .footer-text {{
-            position: relative;
-            z-index: 2;
-            text-align: center;
-            color: rgba(255,255,255,0.42);
-            font-size: 13px;
-            margin-top: 28px;
-        }}
+            .platform-title {{
+                color: #ffffff;
+                font-size: 23px;
+                font-weight: 800;
+                margin-bottom: 8px;
+            }}
 
-        [data-testid="stTextInput"] input {{
-            border-radius: 14px;
-        }}
-    </style>
+            .platform-desc {{
+                color: rgba(255,255,255,0.66);
+                font-size: 15px;
+                min-height: 58px;
+            }}
 
-    <div class="rain-layer">
-        {rain_items_html}
-    </div>
-    """,
-    unsafe_allow_html=True
-)
+            .metric-mini {{
+                color: #d4af37;
+                font-size: 13px;
+                letter-spacing: 0.7px;
+                text-transform: uppercase;
+                margin-bottom: 8px;
+                font-weight: 700;
+            }}
+
+            div.stButton > button {{
+                width: 100%;
+                border-radius: 15px;
+                border: 1px solid rgba(212,175,55,0.55);
+                background: linear-gradient(135deg, #d4af37, #9d7417);
+                color: #111111;
+                font-weight: 850;
+                padding: 0.78rem 1rem;
+            }}
+
+            div.stButton > button:hover {{
+                border-color: #ffffff;
+                color: #000000;
+                box-shadow: 0 0 24px rgba(212,175,55,0.38);
+            }}
+
+            .footer-text {{
+                position: relative;
+                z-index: 2;
+                text-align: center;
+                color: rgba(255,255,255,0.42);
+                font-size: 13px;
+                margin-top: 28px;
+            }}
+
+            [data-testid="stTextInput"] input {{
+                border-radius: 14px;
+            }}
+        </style>
+
+        <div class="rain-layer">
+            {rain_items_html}
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
 
 # =========================
 # LOGIN PAGE
 # =========================
 def login_page():
+    inject_main_css()
+
     logo_to_use = logo_dark_uri if logo_dark_uri else logo_light_uri
 
     st.markdown('<div class="main-card">', unsafe_allow_html=True)
@@ -353,27 +363,116 @@ def login_page():
         unsafe_allow_html=True
     )
 
+
+# =========================
+# FIND APP FILE
+# =========================
+def find_app_file(active_app: str):
+    app_paths = {
+        "shopify": [
+            BASE_DIR / "Pages" / "Shopify_app" / "Shopify_app.py",
+            BASE_DIR / "Pages" / "Shopify_app.py",
+            BASE_DIR / "pages" / "Shopify_app.py",
+            BASE_DIR / "Shopify_app.py",
+        ],
+        "trendyol": [
+            BASE_DIR / "Pages" / "smartek_app" / "smartek_app.py",
+            BASE_DIR / "Pages" / "smartek_app.py",
+            BASE_DIR / "pages" / "smartek_app.py",
+            BASE_DIR / "smartek_app.py",
+        ],
+        "hepsiburada": [
+            BASE_DIR / "Pages" / "Hepsiburada_app" / "Hepsiburada_app.py",
+            BASE_DIR / "Pages" / "Hepsiburada_app.py",
+            BASE_DIR / "pages" / "Hepsiburada_app.py",
+            BASE_DIR / "Hepsiburada_app.py",
+        ],
+    }
+
+    possible_paths = app_paths.get(active_app, [])
+
+    for path in possible_paths:
+        if path.exists():
+            return path, possible_paths
+
+    return None, possible_paths
+
+
+# =========================
+# DEBUG IF FILE NOT FOUND
+# =========================
+def show_file_debug(active_app: str, possible_paths: list[Path]):
+    st.error("Uygulama dosyası bulunamadı.")
+    st.write("Aranan uygulama:")
+    st.code(active_app)
+
+    st.write("BASE_DIR:")
+    st.code(str(BASE_DIR))
+
+    st.write("Denenen yollar:")
+    for path in possible_paths:
+        st.code(str(path))
+
+    st.write("BASE_DIR içindeki dosyalar:")
+    try:
+        st.write([p.name for p in BASE_DIR.iterdir()])
+    except Exception as e:
+        st.write(str(e))
+
+    lower_pages = BASE_DIR / "pages"
+    upper_pages = BASE_DIR / "Pages"
+
+    if lower_pages.exists():
+        st.write("Küçük harfli pages klasörü içeriği:")
+        try:
+            st.write([p.name for p in lower_pages.iterdir()])
+        except Exception as e:
+            st.write(str(e))
+    else:
+        st.warning("Küçük harfli pages klasörü bulunamadı.")
+
+    if upper_pages.exists():
+        st.write("Büyük harfli Pages klasörü içeriği:")
+        try:
+            st.write([p.name for p in upper_pages.iterdir()])
+        except Exception as e:
+            st.write(str(e))
+
+        try:
+            for folder in upper_pages.iterdir():
+                if folder.is_dir():
+                    st.write(f"{folder.name} klasörü içeriği:")
+                    st.write([p.name for p in folder.iterdir()])
+        except Exception as e:
+            st.write(str(e))
+    else:
+        st.warning("Büyük harfli Pages klasörü bulunamadı.")
+
+    st.stop()
+
+
 # =========================
 # RUN SELECTED APP
 # =========================
 def run_selected_app():
-    if st.session_state.active_app == "shopify":
-        target_file = BASE_DIR / "Pages" / "Shopify_app" / "Shopify_app.py"
-    elif st.session_state.active_app == "trendyol":
-        target_file = BASE_DIR / "Pages" / "smartek_app" / "smartek_app.py"
-    elif st.session_state.active_app == "hepsiburada":
-        target_file = BASE_DIR / "Pages" / "Hepsiburada_app" / "Hepsiburada_app.py"
-    else:
-        st.session_state.active_app = "home"
-        st.rerun()
+    active_app = st.session_state.get("active_app", "home")
 
-    if not target_file.exists():
-        st.error(f"Dosya bulunamadı: {target_file}")
-        st.stop()
+    if active_app == "home":
+        dashboard_page()
+        return
 
-    if st.button("← Ana Sayfaya Dön"):
-        st.session_state.active_app = "home"
-        st.rerun()
+    target_file, possible_paths = find_app_file(active_app)
+
+    if target_file is None:
+        show_file_debug(active_app, possible_paths)
+
+    top_left, top_right = st.columns([1, 5])
+    with top_left:
+        if st.button("← Ana Sayfaya Dön"):
+            st.session_state.active_app = "home"
+            st.rerun()
+
+    st.caption(f"Çalıştırılan dosya: {target_file}")
 
     original_set_page_config = st.set_page_config
     st.set_page_config = lambda *args, **kwargs: None
@@ -383,10 +482,13 @@ def run_selected_app():
     finally:
         st.set_page_config = original_set_page_config
 
+
 # =========================
 # DASHBOARD PAGE
 # =========================
 def dashboard_page():
+    inject_main_css()
+
     logo_to_use = logo_dark_uri if logo_dark_uri else logo_light_uri
 
     st.markdown('<div class="main-card">', unsafe_allow_html=True)
@@ -469,7 +571,7 @@ def dashboard_page():
     left, right = st.columns([3, 1])
 
     with left:
-        st.info("Bu ana sayfa merkezi giriş kapısıdır. Platform kodların Pages klasörünün içinden çalışır.")
+        st.info("Bu ana sayfa merkezi giriş kapısıdır. Platform kodları Pages klasörünün içinden doğrudan çalıştırılır.")
 
     with right:
         if st.button("Çıkış Yap"):
@@ -483,6 +585,7 @@ def dashboard_page():
         '<div class="footer-text">IQIBLA Türkiye © Merkezi Yönetim Paneli</div>',
         unsafe_allow_html=True
     )
+
 
 # =========================
 # ROUTER
