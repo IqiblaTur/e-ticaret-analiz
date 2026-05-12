@@ -13,6 +13,15 @@ import streamlit as st
 # PAGE
 # =========================================================
 st.set_page_config(page_title="SMARTEK360 Trendyol", layout="wide")
+
+# =========================================================
+# LOGIN CONTROL
+# =========================================================
+# Bu dosya ana sayfadan giriş yapılmadan çalışmasın.
+if "logged_in" not in st.session_state or st.session_state.logged_in is not True:
+    st.warning("Bu sayfaya erişmek için önce ana sayfadan giriş yapmalısın.")
+    st.stop()
+
 st.title("🟠 SMARTEK360: Trendyol Dashboard")
 st.caption(
     "Runs only with Trendyol orders, Trendyol ads, store report, cost data, and optional Meta ads data. "
