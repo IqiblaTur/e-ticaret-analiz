@@ -8,11 +8,23 @@ import re
 import unicodedata
 
 st.set_page_config(page_title="SMARTEK360 | Hepsiburada Dashboard", layout="wide")
+
+# =========================================================
+# LOGIN CONTROL
+# =========================================================
+# Bu dosya ana sayfadan giriş yapılmadan çalışmasın.
+if "logged_in" not in st.session_state or st.session_state.logged_in is not True:
+    st.warning("Bu sayfaya erişmek için önce ana sayfadan giriş yapmalısın.")
+    st.stop()
+
 st.title("🟠 SMARTEK360: Hepsiburada Dashboard")
 st.caption(
     "English-only dashboard for Hepsiburada sales, store traffic, cost table, manual inventory, and optional marketing files. "
     "Defaults to All Time and supports an optional custom date range when dated datasets exist."
 )
+
+if st.button("← Ana Sayfaya Dön"):
+    st.switch_page("ana_sayfa.py")
 
 DATA_DIR = Path(__file__).resolve().parent
 
